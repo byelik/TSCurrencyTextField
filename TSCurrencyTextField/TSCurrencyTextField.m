@@ -15,9 +15,9 @@
 @implementation TSCurrencyTextField
 {
     TSCurrencyTextFieldDelegate* _currencyTextFieldDelegate;
-
+    
     NSNumberFormatter*           _currencyNumberFormatter;
-
+    
     NSCharacterSet*              _invalidInputCharacterSet;
 }
 
@@ -44,7 +44,7 @@
 - (void) TSCurrencyTextField_commonInit
 {
     _invalidInputCharacterSet = [[NSCharacterSet decimalDigitCharacterSet] invertedSet];
-
+    
     _currencyNumberFormatter = [[NSNumberFormatter alloc] init];
     _currencyNumberFormatter.locale = [NSLocale currentLocale];
     _currencyNumberFormatter.numberStyle = kCFNumberFormatterCurrencyStyle;
@@ -134,7 +134,7 @@
 - (id) forwardingTargetForSelector: (SEL) aSelector
 {
     // we'll forward any implemented UITextFieldDelegate method, other than the one we implement ourself.
-
+    
     struct objc_method_description md = protocol_getMethodDescription( @protocol(UITextFieldDelegate), aSelector, NO, YES);
     
     if ( md.name != NULL && md.types != NULL && [self.delegate respondsToSelector: aSelector] )
@@ -152,12 +152,15 @@
         return NO;
     }
     
-    int distanceFromEnd = textField.text.length - (range.location + range.length);
+    NSInteger distanceFromEnd = textField.text.length - (range.location + range.length);
     
     NSString* changed = [textField.text stringByReplacingCharactersInRange: range withString: string];
-    [textField setText: changed];
+    if (changed.length < 21)
+    {
+        [textField setText: changed];
+    }
     
-    int pos = textField.text.length - distanceFromEnd;
+    NSInteger pos = textField.text.length - distanceFromEnd;
     if ( pos >= 0 && pos <= textField.text.length )
     {
         [textField setCaratPosition: pos];
