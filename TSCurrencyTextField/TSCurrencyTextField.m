@@ -148,7 +148,15 @@
     // "deleting" a formatting character just back-spaces over that character:
     if ( string.length == 0 && range.length == 1 && [[textField invalidInputCharacterSet] characterIsMember: [textField.text characterAtIndex: range.location]] )
     {
-        [textField setCaratPosition: range.location];
+        NSMutableCharacterSet *chSet = [[NSCharacterSet decimalDigitCharacterSet] mutableCopy];
+        [chSet addCharactersInString:@".,"];
+        [chSet formUnionWithCharacterSet:[NSCharacterSet whitespaceCharacterSet]];
+        NSCharacterSet *nonDigitCharacterSet = [chSet invertedSet];
+        NSRange searchRange = NSMakeRange(0, textField.text.length);
+        NSRange foundRange = [textField.text rangeOfCharacterFromSet:nonDigitCharacterSet
+                                                             options:0
+                                                               range:searchRange];
+        [textField setCaratPosition: foundRange.location-1];
         return NO;
     }
     
