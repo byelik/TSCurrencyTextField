@@ -14,4 +14,6 @@
 
 @property (nonatomic) NSNumber* amount;
 
+- (void) setText: (NSString *) text;
+
 @end
